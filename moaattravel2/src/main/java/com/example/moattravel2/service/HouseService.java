@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.moattravel2.entity.House;
+import com.example.moattravel2.form.HouseEditForm;
 import com.example.moattravel2.form.HouseRegisterForm;
 import com.example.moattravel2.repository.HouseRepository;
 
@@ -55,6 +56,39 @@ public class HouseService {
 		houseRepository.save(house);
 			
 		}
+	
+	@Transactional
+	public void update(HouseEditForm houseEditForm) {
+		
+		House house = houseRepository.getReferenceById(houseEditForm.getId());
+		
+		MultipartFile imageFile =houseEditForm.getImageFile();
+		
+		
+		if(!imageFile.isEmpty()) {
+			
+			String imageName =imageFile.getOriginalFilename();
+			
+			String hashedImageName = generateNewFileName(imageName);
+
+            Path filePath = Paths.get("src/main/resources/static/storage/" + hashedImageName);
+			
+			copyImageFile(imageFile, filePath);
+			
+			house.setImageName(hashedImageName);
+			
+		}
+		house.setName(houseEditForm.getName());
+		house.setDescription(houseEditForm.getDescription());
+		house.setPrice(houseEditForm.getPrice());
+		house.setCapacity(houseEditForm.getCapacity());
+		house.setPostalCode(houseEditForm.getPostalCode());
+		house.setAddress(houseEditForm.getAddress());
+		house.setPhoneNumber(houseEditForm.getPhoneNumber());
+
+		houseRepository.save(house);		
+				
+	}
 	
 	//UUIDを使って生成したファイル名を返す
 	public String generateNewFileName(String fileName) {

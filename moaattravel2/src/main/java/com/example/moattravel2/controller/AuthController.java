@@ -43,7 +43,7 @@ public class AuthController {
 		return "auth/signup";
 	}
 
-	@PostMapping("auth/signup")
+	@PostMapping("/signup")
 	public String signup(@ModelAttribute @Validated SignupForm signupForm, BindingResult bindingResult,
 			RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 
@@ -67,8 +67,6 @@ public class AuthController {
 			return "auth/signup";
 
 		}
-		userService.create(signupForm);
-
 		redirectAttributes.addFlashAttribute("successMessage", "会員登録が完了しました。");
 
 		User createdUser = userService.create(signupForm);
@@ -77,7 +75,7 @@ public class AuthController {
 		
 		signupEventPublisher.publishSignupEvent(createdUser,requestUrl);
 		
-		redirectAttributes.addFlashAttribute("seccesMessage", "ご入力頂いたメールアドレスに認証メールを送信しました。メールに記載されているリンクをクリックし、会員登録を完了してください。");
+		redirectAttributes.addFlashAttribute("successMessage", "ご入力頂いたメールアドレスに認証メールを送信しました。メールに記載されているリンクをクリックし、会員登録を完了してください。");
 		
 		
 		return "redirect:/";

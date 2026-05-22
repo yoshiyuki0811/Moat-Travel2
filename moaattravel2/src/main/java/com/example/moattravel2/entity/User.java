@@ -22,6 +22,9 @@ public class User {
 	@Column(name="id")
 	private Integer id;
 	
+	@Column(name = "name")
+	private String name;
+	
 	@Column(name="furigana")
 	private String furigana;
 	
@@ -32,7 +35,7 @@ public class User {
 	private String address;
 	
 	@Column(name="phone_number")
-	private String phone_number;
+	private String phoneNumber;
 	
 	@Column(name="email")
 	private String email;
@@ -45,7 +48,7 @@ public class User {
 	private Role role;
 	
 	@Column(name="enabled")
-	private String enabled;
+	private boolean enabled;
 	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;

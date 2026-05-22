@@ -7,5 +7,7 @@ import com.example.moattravel2.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role,Integer> {
+	
+	public Role findByName(String name);
 
 }

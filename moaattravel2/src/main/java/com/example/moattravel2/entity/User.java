@@ -1,5 +1,6 @@
 package com.example.moattravel2.entity;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ import lombok.Data;
 @Entity
 @Table(name="users")
 @Data
-public class User {
+public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,7 +50,7 @@ public class User {
 	private Role role;
 	
 	@Column(name="enabled")
-	private boolean enabled;
+	private Boolean enabled;
 	
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Timestamp createdAt;

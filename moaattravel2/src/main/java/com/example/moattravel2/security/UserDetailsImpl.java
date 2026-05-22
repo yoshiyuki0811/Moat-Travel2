@@ -7,14 +7,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.moattravel2.entity.User;
 
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
 	private final User user;
-
 	private final Collection<GrantedAuthority> authorities;
+	
+	    public UserDetailsImpl(User user, Collection<GrantedAuthority> authorities) {
+        this.user = user;
+        this.authorities = authorities;
+    }
+
+	
 
 	public User getUser() {
 
@@ -54,4 +58,16 @@ public class UserDetailsImpl implements UserDetails {
 	public boolean isAccountNonLocked() {
 		return true;
 	}
+	// ユーザーのパスワードが期限切れでなければtrueを返す
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+     
+    // ユーザーが有効であればtrueを返す
+    @Override
+    public  boolean isEnabled() {
+        return user.getEnabled();
+    }
 }
+

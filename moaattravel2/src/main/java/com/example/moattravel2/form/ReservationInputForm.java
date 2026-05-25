@@ -9,10 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class ReservatonInputForm {
+public class ReservationInputForm {
 	
 	@NotBlank(message ="チェックイン日とチェックアウト日を選択してください")
-	private String fromCkeckinDateToCheckoutDate;
+	private String fromCheckinDateToCheckoutDate;
 	
 	@NotNull(message="宿泊人数を入力してください。")
 	@Min(value =1,message ="宿泊人数は一人以上に設定してください。")
@@ -21,7 +21,7 @@ public class ReservatonInputForm {
 	//チェックイン日を取得する
 	 public LocalDate getCheckinDate() {
 		 
-		 String[] checkinDateAndCheckoutDate= getFromCkeckinDateToCheckoutDate().split("から");
+		 String[] checkinDateAndCheckoutDate= getFromCheckinDateToCheckoutDate().split("から");
 		 
 		 return LocalDate.parse(checkinDateAndCheckoutDate[0]);
 	 }
@@ -29,7 +29,7 @@ public class ReservatonInputForm {
 	//チェックアウト日を取得する
 	 public LocalDate getCheckoutDate() {
 		 
-		 String[] checkinDateAndCheckoutDate = getFromCkeckinDateToCheckoutDate().split("から");
+		 String[] checkinDateAndCheckoutDate = getFromCheckinDateToCheckoutDate().split("から");
 		 
 		 return LocalDate.parse(checkinDateAndCheckoutDate[1]);
 	 }

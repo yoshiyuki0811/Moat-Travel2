@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.moattravel2.entity.House;
-import com.example.moattravel2.form.ReservatonInputForm;
+import com.example.moattravel2.form.ReservationInputForm;
 import com.example.moattravel2.repository.HouseRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -92,7 +92,7 @@ public class HouseController {
 		
 		model.addAttribute("house", house);
 		
-		model.addAttribute("reservationInputForm", new ReservatonInputForm());
+		model.addAttribute("reservationInputForm", new ReservationInputForm());
 		
 		return "houses/show";
 	}

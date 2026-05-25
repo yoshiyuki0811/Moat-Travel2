@@ -3,10 +3,64 @@ package com.example.moattravel2.service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
+import com.example.moattravel2.entity.House;
+import com.example.moattravel2.entity.Reservation;
+import com.example.moattravel2.entity.User;
+import com.example.moattravel2.form.ReservationRegisterForm;
+import com.example.moattravel2.repository.HouseRepository;
+import com.example.moattravel2.repository.ReservationRepository;
+import com.example.moattravel2.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
+	
+	private final ReservationRepository reservationRepository;
+	private final HouseRepository houseRepository;
+	private final UserRepository userRepository;
+	
+	@Transactional
+	public void create(ReservationRegisterForm reservationRegisterForm) {
+		
+		Reservation reservation = new Reservation();
+		
+		House house = houseRepository.getReferenceById(reservationRegisterForm.getHouseId());
+		
+		User user = userRepository.getReferenceById(reservationRegisterForm.getUserId());
+		
+		LocalDate checkinDate = LocalDate.parse(reservationRegisterForm.getCheckinDate());
+		
+		LocalDate checkoutDate = LocalDate.parse(reservationRegisterForm.getCheckoutDate());
+		
+		reservation.setHouse(house);;
+		
+		reservation.setUser(user);
+		
+		reservation.setCheckinDate(checkinDate);
+		
+		reservation.setCheckoutDate(checkoutDate);
+		
+		reservation.setNumberOfPeople(reservationRegisterForm.getNumberOfPeople());
+		
+		reservation.setAmount(reservationRegisterForm.getAmount());
+		
+		reservationRepository.save(reservation);
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	//宿泊人数が定員以下かどうかチェックする
 	public boolean isWithinCapacity(Integer numberOfPeople, Integer capacity) {

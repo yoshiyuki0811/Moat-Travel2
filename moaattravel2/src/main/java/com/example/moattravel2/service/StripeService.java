@@ -1,7 +1,6 @@
 package com.example.moattravel2.service;
 
 import java.util.Map;
-import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -12,7 +11,6 @@ import com.example.moattravel2.form.ReservationRegisterForm;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
-import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
@@ -72,24 +70,25 @@ public class StripeService {
 		}
 	}
 	
-	//セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する
-	public void processSessionCompleted(Event event) {
-		
-		Optional<StripeObject> optionalStripeObject = event.getDataObjectDeserializer().getObject();
-		optionalStripeObject.ifPresent(stripeObject -> {
-		    Session session = (Session)stripeObject;
-		    SessionRetrieveParams params = SessionRetrieveParams.builder().addExpand("payment_intent").build();
+	//セッションから予約情報を取得し、ReservationServiceクラスを介してデータベースに登録する  Stripeを最新バージョンにする場合元のコードで動く
+		public void processSessionCompleted(Event event) {
 
-		    try {
-		        session = Session.retrieve(session.getId(), params, null);
-		        Map<String, String> paymentIntentObject = session.getPaymentIntentObject().getMetadata();
-		        reservationService.create(paymentIntentObject);
-		    } catch (StripeException e) {
-		        e.printStackTrace();
-		    }
-		});
+	    String rawJson = event.getDataObjectDeserializer().getRawJson();
+	    String sessionId = rawJson.split("\"id\":\"")[1].split("\"")[0];
+
+	    try {
+	        SessionRetrieveParams params = SessionRetrieveParams.builder()
+	                .addExpand("payment_intent")
+	                .build();
+	        Session session = Session.retrieve(sessionId, params, null);
+	        Map<String, String> paymentIntentObject = session.getPaymentIntentObject().getMetadata();
+	        reservationService.create(paymentIntentObject);
+	    } catch (StripeException e) {
+	        e.printStackTrace();
+	    }
+	}
 			
 					
 		
 		}
-}
+

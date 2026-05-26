@@ -3,10 +3,10 @@ package com.example.moattravel2.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.moattravel2.service.StripeService;
 import com.stripe.Stripe;
@@ -16,11 +16,11 @@ import com.stripe.net.Webhook;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class StripeWebhookController {
 	
-	private final StripeService stripeSevice;
+	private final StripeService stripeService;
 	
 	@Value("${stripe.api-key}")
 	private String stripeApiKey;
@@ -28,7 +28,7 @@ public class StripeWebhookController {
 	@Value("${stripe.webhook-secret}")
 	private String webhookSecret;
 	
-@PostMapping("/stripe/wabhook")
+@PostMapping("/stripe/webhook")
 public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeader("Stripe-signature")String sigHeader) {
 	
 	Stripe.apiKey =stripeApiKey;
@@ -36,7 +36,7 @@ public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeade
 	Event event= null;
 	
 	try {
-		event = Webhook.constructEvent(payload, sigHeader, sigHeader);
+		event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
 		
 	}catch(SignatureVerificationException e) {
 		
@@ -44,11 +44,10 @@ public ResponseEntity<String> webhook(@RequestBody String payload, @RequestHeade
 		
 		}
 	if("checkout.session.completed".equals(event.getType())) {
-		
-		stripeSevice.processSessionCompleted(event);
+		stripeService.processSessionCompleted(event);
 		
 	}
-	return new ResponseEntity<> ("Succes",HttpStatus.OK);
+	return new ResponseEntity<>("Succes",HttpStatus.OK);
 }
 }
 

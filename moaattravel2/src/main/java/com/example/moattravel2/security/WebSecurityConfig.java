@@ -18,6 +18,10 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityfilterChain(HttpSecurity http)throws Exception{
 		
 		http
+		
+		 .csrf(csrf -> csrf
+		            .ignoringRequestMatchers("/stripe/webhook")  
+		        )
 		.authorizeHttpRequests((requests) ->requests
 				.requestMatchers("/css/**","/images/**","/js/**","/storage/**","/", "/signup/**","/houses", "/houses/{id}","/stripe/webhook").permitAll()//すべてのユーザーにアクセスを許可するURL
 				.requestMatchers("/admin/**").hasRole("ADMIN")//管理者にのみアクセスを許可するURL

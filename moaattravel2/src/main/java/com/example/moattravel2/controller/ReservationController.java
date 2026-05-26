@@ -132,9 +132,9 @@ public class ReservationController {
 	}
 	
 	@PostMapping("/houses/{id}/reservations/create")
-	public String create(@RequestParam Map<String, String> paymentIntentObject) {
+	public String create(@RequestParam Map<String, String> reservationRegister) {
 		
-		reservationService.create(paymentIntentObject);
+		reservationService.create(reservationRegister);
 		
 		return "redirect:/reservations?reserved";
 		

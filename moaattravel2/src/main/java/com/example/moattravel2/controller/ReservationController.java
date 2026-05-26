@@ -1,6 +1,9 @@
 package com.example.moattravel2.controller;
 
 import java.time.LocalDate;
+import java.util.Map;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.moattravel2.entity.House;
@@ -27,6 +31,7 @@ import com.example.moattravel2.repository.HouseRepository;
 import com.example.moattravel2.repository.ReservationRepository;
 import com.example.moattravel2.security.UserDetailsImpl;
 import com.example.moattravel2.service.ReservationService;
+import com.example.moattravel2.service.StripeService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +42,7 @@ public class ReservationController {
 	private final ReservationRepository reservationRepository;
 	private final HouseRepository houseRepository;
 	private final ReservationService reservationService;
+	private final StripeService stripeService;
 
 	@GetMapping("/reservations")
 	public String index(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC)Pageable pageable, Model model) {
@@ -88,6 +94,7 @@ public class ReservationController {
 	public String confirm(@PathVariable(name ="id")Integer id,
 			@ModelAttribute ReservationInputForm reservationInputForm,
 			@AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+			HttpServletRequest httpServletRequest,
 			Model model) {
 		
 		House house =houseRepository.getReferenceById(id);
@@ -112,18 +119,22 @@ public class ReservationController {
 				reservationInputForm.getNumberOfPeople(), 
 				amount);
 		
+		String sessionId = stripeService.createStripeSession(house.getName(), reservationRegisterForm, httpServletRequest);
+		
 		model.addAttribute("reservationRegisterForm",reservationRegisterForm);
 		
 		model.addAttribute("house",house);
+		
+		model.addAttribute("sessionId", sessionId);
 		
 		return "reservations/confirm";
 		
 	}
 	
 	@PostMapping("/houses/{id}/reservations/create")
-	public String create(@ModelAttribute ReservationRegisterForm reservationRegisterForm) {
+	public String create(@RequestParam Map<String, String> paymentIntentObject) {
 		
-		reservationService.create(reservationRegisterForm);
+		reservationService.create(paymentIntentObject);
 		
 		return "redirect:/reservations?reserved";
 		
